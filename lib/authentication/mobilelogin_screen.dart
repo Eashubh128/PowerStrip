@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:snippet_coder_utils/ProgressHUD.dart';
 import 'package:users_app/assistants/assistant_methods.dart';
 import 'package:users_app/authentication/verify.dart';
 import 'package:sms_autofill/sms_autofill.dart';
+import 'package:users_app/global/global.dart';
 
 class MobileLoginScreen extends StatefulWidget {
   const MobileLoginScreen({Key? key}) : super(key: key);
@@ -13,6 +15,13 @@ class MobileLoginScreen extends StatefulWidget {
 }
 
 class _MobileLoginScreenState extends State<MobileLoginScreen> {
+  String verId = "";
+  bool isAPICallProcess = false;
+  String mobileNo = "";
+  TextEditingController controller = TextEditingController();
+  TextEditingController phonecodecontroller =
+      TextEditingController(text: "+91");
+
   void getPermission() async {
     var status = await Permission.location.status;
     if (status.isGranted) {
@@ -23,9 +32,39 @@ class _MobileLoginScreenState extends State<MobileLoginScreen> {
     }
   }
 
-  bool isAPICallProcess = false;
-  String mobileNo = "";
-  TextEditingController controller = TextEditingController();
+  Future<void> verifyPhone() async {
+    await fAuth.verifyPhoneNumber(
+        phoneNumber: mobileNo,
+        verificationCompleted: (PhoneAuthCredential
+            credential) {} /*(PhoneAuthCredential credential) async {
+          await fAuth.signInWithCredential(credential);
+          final snackBar = SnackBar(content: Text("Login Success"));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        }*/
+        ,
+        verificationFailed: (FirebaseAuthException e) {
+          print(e.message);
+          final snackBar = SnackBar(content: Text("${e.message}"));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        },
+        codeSent: (String verficationId, int? resendToken) {
+          verId = verficationId;
+          print("verification Id login screen is :");
+          print(verId);
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: ((context) => VerifyOtp(
+                        mobilenum: mobileNo,
+                        verificationID: verId,
+                      ))));
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {
+          //
+        },
+        timeout: Duration(seconds: 60));
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -90,21 +129,45 @@ class _MobileLoginScreenState extends State<MobileLoginScreen> {
                       borderRadius: BorderRadius.circular(10)),
                   child: Column(
                     children: [
-                      TextField(
-                        controller: controller,
-                        decoration: InputDecoration(
-                            hintText: "Enter Mobile Number",
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15))),
-                        keyboardType: TextInputType.phone,
-                        onChanged: (String value) {
-                          if (value.length > 9) {
-                            mobileNo = value;
-                          }
-                        },
-                      ),
+                      Row(children: [
+                        Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15)),
+                          width: 30,
+                          height: 55,
+                          child: Center(
+                            child: TextField(
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.w800),
+                              controller: phonecodecontroller,
+                              decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  fillColor: Colors.white),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Expanded(
+                          child: TextField(
+                            controller: controller,
+                            decoration: InputDecoration(
+                                hintText: "Enter Mobile Number",
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15))),
+                            keyboardType: TextInputType.phone,
+                            onChanged: (String value) {
+                              if (value.length > 9) {
+                                mobileNo = value;
+                              }
+                            },
+                          ),
+                        )
+                      ]),
                       const SizedBox(
                         height: 25,
                       ),
@@ -118,12 +181,22 @@ class _MobileLoginScreenState extends State<MobileLoginScreen> {
                         child: TextButton(
                           onPressed: () {
                             // for ui flow testing directly navigating to verify page else execute the below code
+                            verifyPhone();
+                            print(mobileNo);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: ((context) => VerifyOtp(
+                                          mobilenum: mobileNo,
+                                          verificationID: verId,
+                                        ))));
+                            /*
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: ((context) =>
                                         VerifyOtp(mobilenum: mobileNo))));
-                            /*
+                            
                           for ui flow testing directly navigating to verify page else execute the below code
                             if (mobileNo.length > 9) {
                               setState(() {

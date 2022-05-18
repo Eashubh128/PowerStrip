@@ -44,6 +44,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "418871831881-40rkupi9a7e4kdj6vlsa4lgc12s4ohsh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.powerstrip.rideuser",
+            "certificate_hash": "7361c8387f74551c5194acd0178104447c040e80"
+          }
+        },
+        {
           "client_id": "418871831881-q2m4o6hlpfqlagsid9nk5laolm6qd92g.apps.googleusercontent.com",
           "client_type": 3
         }

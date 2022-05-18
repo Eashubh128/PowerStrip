@@ -6,6 +6,7 @@ import 'package:users_app/authentication/login_screen.dart';
 import 'package:users_app/global/global.dart';
 import 'package:users_app/mainScreens/main_screen.dart';
 import 'package:users_app/authentication/mobilelogin_screen.dart';
+import 'package:users_app/mainScreens/ourservices_screen.dart';
 
 class MySplashScreen extends StatefulWidget {
   const MySplashScreen({Key? key}) : super(key: key);
@@ -30,14 +31,14 @@ class _MySplashScreenState extends State<MySplashScreen> {
     fAuth.currentUser != null
         ? AssistantMethods.readCurrentOnlineUserInfo()
         : null;
-    Timer(const Duration(seconds: 5), () async {
+    Timer(const Duration(seconds: 4), () async {
       if (fAuth.currentUser != null) {
         currentFirebaseUser = fAuth.currentUser;
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (c) =>
-                    MobileLoginScreen())); // for ui flow testing sending to mobile login screen . For functional test send to MainScreen()
+                    OurServices())); // for ui flow testing sending to mobile login screen . For functional test send to MainScreen()
       } else {
         Navigator.push(
             context,
@@ -64,7 +65,10 @@ class _MySplashScreenState extends State<MySplashScreen> {
         child: Column(
             //mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              SizedBox(child: Image.asset("images/powerstrip.png")),
+              Container(
+                child: Image.asset("images/powerstrip1.png"),
+                padding: EdgeInsets.only(left: 20),
+              ),
               const SizedBox(
                 height: 73,
               ),

@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:users_app/models/direction_details_info.dart';
 import 'package:users_app/models/user_model.dart';
 
 final FirebaseAuth fAuth = FirebaseAuth.instance;
 User? currentFirebaseUser;
+DatabaseReference userref = FirebaseDatabase.instance.ref("users");
 UserModel? userModelCurrentInfo;
 List dList = []; //online-active drivers Information List
 DirectionDetailsInfo? tripDirectionDetailsInfo;

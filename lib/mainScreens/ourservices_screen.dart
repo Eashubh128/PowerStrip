@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:users_app/assistants/assistant_methods.dart';
 import 'package:users_app/authentication/login_screen.dart';
+import 'package:users_app/global/global.dart';
+import 'package:users_app/mainScreens/main_screen.dart';
 
 class OurServices extends StatefulWidget {
   const OurServices({Key? key}) : super(key: key);
@@ -96,7 +98,7 @@ class _OurServicesState extends State<OurServices> {
                           fontWeight: FontWeight.bold),
                     ),
                     const Text(
-                      "Ride where you park",
+                      "Ride where you wish to",
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 15,
@@ -105,9 +107,10 @@ class _OurServicesState extends State<OurServices> {
                   ],
                 ),
                 onPressed: () async {
+                  print(currentFirebaseUser!.uid);
                   await Fluttertoast.showToast(msg: "To Ride app ");
                   Navigator.push(context,
-                      MaterialPageRoute(builder: ((context) => LoginScreen())));
+                      MaterialPageRoute(builder: ((context) => MainScreen())));
                   //to ridehailing login page
                 },
               ),

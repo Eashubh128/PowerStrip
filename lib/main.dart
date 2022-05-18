@@ -1,13 +1,15 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:users_app/infoHandler/app_info.dart';
-import 'package:users_app/mainScreens/paymentpage.dart';
+
 import 'package:users_app/splashScreen/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
 
   runApp(
     MyApp(
@@ -19,7 +21,7 @@ void main() async {
             fontFamily: 'Sulpherpoint',
             primarySwatch: Colors.blue,
           ),
-          home: const MySplashScreen(),
+          home: MySplashScreen(),
           debugShowCheckedModeBanner: false,
         ),
       ),

@@ -21,6 +21,7 @@ import 'package:users_app/models/active_nearby_available_drivers.dart';
 import 'package:users_app/widgets/my_drawer.dart';
 import 'package:users_app/widgets/pay_fare_amount_dialog.dart';
 import 'package:users_app/widgets/progress_dialog.dart';
+import 'package:users_app/widgets/userdetailsdialog.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -51,8 +52,8 @@ class _MainScreenState extends State<MainScreen> {
             userCurrentPosition!, context);
     print("this is your address = " + humanReadableAddress);
 
-    userName = userModelCurrentInfo!.name!;
-    userEmail = userModelCurrentInfo!.email!;
+    userName = userModelCurrentInfo?.name;
+    userEmail = userModelCurrentInfo?.email;
 
     initializeGeoFireListener();
   }
@@ -79,8 +80,8 @@ class _MainScreenState extends State<MainScreen> {
   Set<Marker> markersSet = {};
   Set<Circle> circlesSet = {};
 
-  String userName = "your Name";
-  String userEmail = "your Email";
+  String? userName;
+  String? userEmail;
 
   bool openNavigationDrawer = true;
 
@@ -278,7 +279,6 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   saveRideRequestInformation() {
-    //1. save the RideRequest Information
     referenceRideRequest =
         FirebaseDatabase.instance.ref().child("All Ride Requests").push();
 
@@ -303,8 +303,8 @@ class _MainScreenState extends State<MainScreen> {
       "origin": originLocationMap,
       "destination": destinationLocationMap,
       "time": DateTime.now().toString(),
-      "userName": userModelCurrentInfo!.name,
-      "userPhone": userModelCurrentInfo!.phone,
+      "userName": userModelCurrentInfo?.name,
+      "userPhone": userModelCurrentInfo?.phone,
       "originAddress": originLocation.locationName,
       "destinationAddress": destinationLocation.locationName,
       "driverId": "waiting",
@@ -501,6 +501,7 @@ class _MainScreenState extends State<MainScreen> {
         MaterialPageRoute(
             builder: (c) => SelectNearestActiveDriversScreen(
                 referenceRideRequest: referenceRideRequest)));
+    print("response is " + response);
 
     if (response == "driverChoosed") {
       FirebaseDatabase.instance
@@ -641,7 +642,7 @@ class _MainScreenState extends State<MainScreen> {
             mapType: MapType.normal,
             myLocationEnabled: true,
             zoomGesturesEnabled: true,
-            zoomControlsEnabled: true,
+            zoomControlsEnabled: false,
             initialCameraPosition: _kGooglePlex,
             polylines: polyLineSet,
             markers: markersSet,
@@ -661,12 +662,48 @@ class _MainScreenState extends State<MainScreen> {
             },
           ),
 
+          Positioned(
+            top: 10,
+            left: 10,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 5),
+              height: 45,
+              decoration: BoxDecoration(
+                  color: Colors.black, borderRadius: BorderRadius.circular(10)),
+              child: Row(
+                children: [
+                  Container(
+                    height: 10,
+                    width: 10,
+                    decoration: BoxDecoration(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.circular(4)),
+                  ),
+                  const SizedBox(
+                    width: 7,
+                  ),
+                  Text(
+                    Provider.of<AppInfo>(context).userPickUpLocation != null
+                        ? (Provider.of<AppInfo>(context)
+                                    .userPickUpLocation!
+                                    .locationName!)
+                                .substring(0, 40) +
+                            ".."
+                        : "not getting address",
+                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
           //custom hamburger button for drawer
           Positioned(
-            top: 30,
+            top: 430,
             left: 14,
             child: GestureDetector(
               onTap: () {
+                setState(() {});
                 if (openNavigationDrawer) {
                   sKey.currentState!.openDrawer();
                 } else {
@@ -707,47 +744,14 @@ class _MainScreenState extends State<MainScreen> {
                   child: Column(
                     children: [
                       //from
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.add_location_alt_outlined,
-                            color: Colors.grey,
-                          ),
-                          const SizedBox(
-                            width: 12.0,
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                "From",
-                                style:
-                                    TextStyle(color: Colors.grey, fontSize: 12),
-                              ),
-                              Text(
-                                Provider.of<AppInfo>(context)
-                                            .userPickUpLocation !=
-                                        null
-                                    ? (Provider.of<AppInfo>(context)
-                                                .userPickUpLocation!
-                                                .locationName!)
-                                            .substring(0, 24) +
-                                        "..."
-                                    : "not getting address",
-                                style: const TextStyle(
-                                    color: Colors.grey, fontSize: 14),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
 
-                      const SizedBox(height: 10.0),
-
-                      const Divider(
-                        height: 1,
-                        thickness: 1,
-                        color: Colors.grey,
+                      const SizedBox(
+                        height: 5.0,
+                        width: 100,
+                        child: Divider(
+                          thickness: 10,
+                          color: Colors.grey,
+                        ),
                       ),
 
                       const SizedBox(height: 16.0),
@@ -773,7 +777,7 @@ class _MainScreenState extends State<MainScreen> {
                         child: Row(
                           children: [
                             const Icon(
-                              Icons.add_location_alt_outlined,
+                              Icons.zoom_in,
                               color: Colors.grey,
                             ),
                             const SizedBox(
@@ -814,24 +818,49 @@ class _MainScreenState extends State<MainScreen> {
 
                       const SizedBox(height: 16.0),
 
-                      ElevatedButton(
-                        child: const Text(
-                          "Request a Ride",
+                      Container(
+                        width: 500,
+                        height: 50,
+                        child: ElevatedButton(
+                          child: const Text(
+                            "Request a Ride",
+                          ),
+                          onPressed: () async {
+                            print(currentFirebaseUser!.uid);
+                            var snapshot = await userref
+                                .child('${currentFirebaseUser!.uid}/email')
+                                .get();
+                            if (snapshot.value == null) {
+                              print("coming here");
+                              Fluttertoast.showToast(
+                                  msg: "userid is" + currentFirebaseUser!.uid);
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (c) => Userdetailsdialog()));
+                              setState(() {});
+                            }
+                            // print(currentFirebaseUser!.uid);
+                            // print("hello userdropoff location ");
+                            //print(Provider.of<AppInfo>(context, listen: false)
+                            //  .userDropOffLocation);
+                            if (Provider.of<AppInfo>(context, listen: false)
+                                    .userDropOffLocation !=
+                                null) {
+                              saveRideRequestInformation();
+                            } else if (Provider.of<AppInfo>(context,
+                                        listen: false)
+                                    .userDropOffLocation ==
+                                null) {
+                              Fluttertoast.showToast(
+                                  msg: "Please select destination location ");
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                              primary: Colors.green[300],
+                              textStyle: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold)),
                         ),
-                        onPressed: () {
-                          if (Provider.of<AppInfo>(context, listen: false)
-                                  .userDropOffLocation !=
-                              null) {
-                            saveRideRequestInformation();
-                          } else {
-                            Fluttertoast.showToast(
-                                msg: "Please select destination location ");
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                            primary: Colors.green,
-                            textStyle: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold)),
                       ),
                     ],
                   ),

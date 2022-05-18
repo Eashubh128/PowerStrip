@@ -2,7 +2,8 @@
     package="com.example.users_app">
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> 
    <application
-        android:label="users_app"
+        android:hardwareAccelerated="true"
+        android:label="Powerstrip"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
@@ -33,6 +34,6 @@
             android:value="2" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyD5aETIj3Vsy7HNT_AJrgxy7uPTf7NLiVA" />
+            android:value="AIzaSyCf50CAnGbGnhY4nuYin8PqQNbxysuNDgk" />
     </application>
 </manifest>

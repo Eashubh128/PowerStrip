@@ -1,19 +1,48 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 import 'package:users_app/assistants/assistant_methods.dart';
 import 'package:snippet_coder_utils/ProgressHUD.dart';
+import 'package:users_app/global/global.dart';
+import 'package:users_app/mainScreens/main_screen.dart';
 
 import '../mainScreens/ourservices_screen.dart';
 
 class VerifyOtp extends StatefulWidget {
   final String? mobilenum;
-  const VerifyOtp({Key? key, required this.mobilenum}) : super(key: key);
+
+  final String? verificationID;
+  const VerifyOtp(
+      {Key? key, required this.mobilenum, required this.verificationID})
+      : super(key: key);
 
   @override
   State<VerifyOtp> createState() => _VerifyOtpState();
 }
 
 class _VerifyOtpState extends State<VerifyOtp> {
+  Future<void> verifyPin(String pin) async {
+    print(widget.verificationID);
+    PhoneAuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: widget.verificationID!, smsCode: pin);
+    try {
+      final User? firebaseUser =
+          (await fAuth.signInWithCredential(credential)).user;
+
+      currentFirebaseUser = firebaseUser;
+      final snackBar = SnackBar(content: Text("Login Success"));
+      await ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => OurServices()));
+    } on FirebaseAuthException catch (e) {
+      final snackBar = SnackBar(content: Text("${e.message}"));
+      print(e.message);
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
+
   bool isAPICallProcess = false;
   String enteredotp = "";
   TextEditingController controller = TextEditingController();
@@ -21,7 +50,6 @@ class _VerifyOtpState extends State<VerifyOtp> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        print("hello");
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
@@ -113,11 +141,12 @@ class _VerifyOtpState extends State<VerifyOtp> {
                         ),
                         child: TextButton(
                           onPressed: () {
-                            Navigator.push(
+                            verifyPin(enteredotp);
+                            /*Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => OurServices()));
-                            /*//for ui testing navigating to our services page 
+                            //for ui testing navigating to our services page 
                             setState(() {
                               isAPICallProcess = true;
                             });
