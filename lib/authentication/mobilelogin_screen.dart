@@ -180,6 +180,7 @@ class _MobileLoginScreenState extends State<MobileLoginScreen> {
                         ),
                         child: TextButton(
                           onPressed: () {
+                            mobileNo = "+91" + mobileNo;
                             // for ui flow testing directly navigating to verify page else execute the below code
                             verifyPhone();
                             print(mobileNo);

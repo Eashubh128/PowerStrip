@@ -1,7 +1,9 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:users_app/assistants/assistant_methods.dart';
 import 'package:users_app/global/global.dart';
+import 'package:users_app/models/user_model.dart';
 import 'package:users_app/widgets/progress_dialog.dart';
 
 class Userdetailsdialog extends StatefulWidget {
@@ -13,7 +15,8 @@ class Userdetailsdialog extends StatefulWidget {
 
 class _UserdetailsdialogState extends State<Userdetailsdialog> {
   var namecontroller = TextEditingController();
-  var phonecontroller = TextEditingController();
+  var phonecontroller =
+      TextEditingController(text: currentFirebaseUser!.phoneNumber);
 
   var emailcontroller = TextEditingController();
 
@@ -34,7 +37,7 @@ class _UserdetailsdialogState extends State<Userdetailsdialog> {
         "id": currentFirebaseUser!.uid,
         "name": namecontroller.text.trim(),
         "email": emailcontroller.text.trim(),
-        "phone": phonecontroller.text.trim(),
+        "phone": currentFirebaseUser!.phoneNumber!.substring(2),
       };
 
       DatabaseReference reference =
@@ -96,14 +99,11 @@ class _UserdetailsdialogState extends State<Userdetailsdialog> {
                 color: Color(0xff1B1D20),
               ),
               TextField(
-                enabled: true,
-                controller: phonecontroller,
+                enabled: false,
+                controller: TextEditingController(
+                    text: currentFirebaseUser!.phoneNumber!.substring(2)),
                 decoration: const InputDecoration(
-                    label: Text(
-                      "Enter Phone Number",
-                      style:
-                          TextStyle(fontWeight: FontWeight.w800, fontSize: 20),
-                    ),
+                    label: Text("Autopicked Phone Number"),
                     border: InputBorder.none),
               ),
               const Divider(
@@ -116,13 +116,18 @@ class _UserdetailsdialogState extends State<Userdetailsdialog> {
                       MaterialStateProperty.all<Color>(Colors.green),
                 ),
                 onPressed: () {
-                  if (emailcontroller.text.length == 0) {
-                    userModelCurrentInfo?.phone;
+                  print(currentFirebaseUser!.phoneNumber);
+                  print(phonecontroller.text);
+                  if (emailcontroller.text.length == 0 ||
+                      namecontroller.text.length == 0) {
+                    Fluttertoast.showToast(msg: "Values Cannot Be Empty");
+                  } else {
+                    submit(namecontroller.text, emailcontroller.text,
+                        phonecontroller.text);
+                    AssistantMethods.readCurrentOnlineUserInfo();
+
+                    Navigator.pop(context);
                   }
-                  print(currentFirebaseUser!.uid);
-                  submit(namecontroller.text, emailcontroller.text,
-                      phonecontroller.text);
-                  Navigator.pop(context);
                 },
                 child: Text("Submit Details"),
               ),

@@ -32,6 +32,8 @@ class AssistantMethods {
     }
   }
 
+  static void checkUserExist() {}
+
   static var client = http.Client();
   static Future<OtpLoginResponse?> otplogin(String mobilenum) async {
     Map<String, String> requestHeaders = {'Content-Type': 'application/json'};

@@ -703,7 +703,10 @@ class _MainScreenState extends State<MainScreen> {
             left: 14,
             child: GestureDetector(
               onTap: () {
-                setState(() {});
+                setState(() {
+                  userModelCurrentInfo;
+                });
+
                 if (openNavigationDrawer) {
                   sKey.currentState!.openDrawer();
                 } else {
@@ -826,10 +829,9 @@ class _MainScreenState extends State<MainScreen> {
                             "Request a Ride",
                           ),
                           onPressed: () async {
-                            print(currentFirebaseUser!.uid);
-                            var snapshot = await userref
-                                .child('${currentFirebaseUser!.uid}/email')
-                                .get();
+                            print(currentFirebaseUser!.phoneNumber);
+                            var snapshot = await userref.child('users').get();
+
                             if (snapshot.value == null) {
                               print("coming here");
                               Fluttertoast.showToast(
@@ -840,10 +842,6 @@ class _MainScreenState extends State<MainScreen> {
                                       builder: (c) => Userdetailsdialog()));
                               setState(() {});
                             }
-                            // print(currentFirebaseUser!.uid);
-                            // print("hello userdropoff location ");
-                            //print(Provider.of<AppInfo>(context, listen: false)
-                            //  .userDropOffLocation);
                             if (Provider.of<AppInfo>(context, listen: false)
                                     .userDropOffLocation !=
                                 null) {
