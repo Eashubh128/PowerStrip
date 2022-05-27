@@ -6,6 +6,8 @@ import 'package:users_app/models/user_model.dart';
 final FirebaseAuth fAuth = FirebaseAuth.instance;
 User? currentFirebaseUser;
 DatabaseReference userref = FirebaseDatabase.instance.ref("users");
+DatabaseReference userref2 =
+    FirebaseDatabase.instance.ref().child('users/${currentFirebaseUser!.uid}');
 UserModel? userModelCurrentInfo;
 List dList = []; //online-active drivers Information List
 DirectionDetailsInfo? tripDirectionDetailsInfo;

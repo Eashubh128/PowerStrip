@@ -66,8 +66,11 @@ class _MySplashScreenState extends State<MySplashScreen> {
             //mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                child: Image.asset("images/powerstrip1.png"),
-                padding: EdgeInsets.only(left: 20),
+                child: Image.asset(
+                  "images/powerstrip1.png",
+                  scale: .7,
+                ),
+                padding: EdgeInsets.only(left: 10, right: 10),
               ),
               const SizedBox(
                 height: 73,

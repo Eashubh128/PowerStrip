@@ -4,6 +4,7 @@ import 'package:users_app/assistants/assistant_methods.dart';
 import 'package:users_app/authentication/login_screen.dart';
 import 'package:users_app/global/global.dart';
 import 'package:users_app/mainScreens/main_screen.dart';
+import 'package:users_app/mainScreens/mainframe.dart';
 
 class OurServices extends StatefulWidget {
   const OurServices({Key? key}) : super(key: key);
@@ -110,7 +111,7 @@ class _OurServicesState extends State<OurServices> {
                   print(currentFirebaseUser!.uid);
                   await Fluttertoast.showToast(msg: "To Ride app ");
                   Navigator.push(context,
-                      MaterialPageRoute(builder: ((context) => MainScreen())));
+                      MaterialPageRoute(builder: ((context) => Mynavbar())));
                   //to ridehailing login page
                 },
               ),

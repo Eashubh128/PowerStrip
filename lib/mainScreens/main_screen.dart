@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,8 @@ import 'package:flutter_geofire/flutter_geofire.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
+import 'dart:ui' as ui;
+
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:users_app/assistants/assistant_methods.dart';
@@ -14,14 +17,18 @@ import 'package:users_app/assistants/geofire_assistant.dart';
 import 'package:users_app/global/global.dart';
 import 'package:users_app/infoHandler/app_info.dart';
 import 'package:users_app/main.dart';
+import 'package:users_app/mainScreens/profile_screen.dart';
 import 'package:users_app/mainScreens/rate_driver_screen.dart';
 import 'package:users_app/mainScreens/search_places_screen.dart';
 import 'package:users_app/mainScreens/select_nearest_active_driver_screen.dart';
 import 'package:users_app/models/active_nearby_available_drivers.dart';
 import 'package:users_app/widgets/my_drawer.dart';
+
 import 'package:users_app/widgets/pay_fare_amount_dialog.dart';
 import 'package:users_app/widgets/progress_dialog.dart';
 import 'package:users_app/widgets/userdetailsdialog.dart';
+
+import 'ourservices_screen.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -735,7 +742,7 @@ class _MainScreenState extends State<MainScreen> {
               child: Container(
                 height: searchLocationContainerHeight,
                 decoration: const BoxDecoration(
-                  color: Colors.black87,
+                  color: Color(0xff1B1D20),
                   borderRadius: BorderRadius.only(
                     topRight: Radius.circular(20),
                     topLeft: Radius.circular(20),
@@ -823,15 +830,15 @@ class _MainScreenState extends State<MainScreen> {
 
                       Container(
                         width: 500,
-                        height: 50,
+                        height: 60,
                         child: ElevatedButton(
                           child: const Text(
                             "Request a Ride",
                           ),
                           onPressed: () async {
-                            print(currentFirebaseUser!.phoneNumber);
-                            var snapshot = await userref.child('users').get();
+                            var snapshot = await userref2.child("name").get();
 
+                            print(snapshot.value);
                             if (snapshot.value == null) {
                               print("coming here");
                               Fluttertoast.showToast(
@@ -1229,7 +1236,7 @@ class _MainScreenState extends State<MainScreen> {
         Marker marker = Marker(
           markerId: MarkerId("driver" + eachDriver.driverId!),
           position: eachDriverActivePosition,
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+          icon: activeNearbyIcon!,
           rotation: 360,
         );
 
@@ -1242,14 +1249,11 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  createActiveNearByDriverIconMarker() {
+  createActiveNearByDriverIconMarker() async {
     if (activeNearbyIcon == null) {
-      ImageConfiguration imageConfiguration =
-          createLocalImageConfiguration(context, size: const Size(2, 2));
-      BitmapDescriptor.fromAssetImage(imageConfiguration, "images/car.png")
-          .then((value) {
-        activeNearbyIcon = value;
-      });
+      final Uint8List markerIcon =
+          await AssistantMethods.getBytesFromAsset('images/Scooty.png', 100);
+      activeNearbyIcon = BitmapDescriptor.fromBytes(markerIcon);
     }
   }
 }

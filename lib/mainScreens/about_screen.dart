@@ -1,33 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-
-class AboutScreen extends StatefulWidget
-{
+class AboutScreen extends StatefulWidget {
   @override
   State<AboutScreen> createState() => _AboutScreenState();
 }
 
-
-
-
-class _AboutScreenState extends State<AboutScreen>
-{
+class _AboutScreenState extends State<AboutScreen> {
   @override
-  Widget build(BuildContext context)
-  {
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       body: ListView(
-
         children: [
-
           //image
-           Container(
+          Container(
             height: 230,
             child: Center(
               child: Image.asset(
-                "images/car_logo.png",
+                "images/powerstrip1.png",
                 width: 260,
               ),
             ),
@@ -35,10 +26,9 @@ class _AboutScreenState extends State<AboutScreen>
 
           Column(
             children: [
-
               //company name
               const Text(
-                "Uber & inDriver Clone",
+                "POWERSTRIP",
                 style: TextStyle(
                   fontSize: 28,
                   color: Colors.white54,
@@ -52,9 +42,9 @@ class _AboutScreenState extends State<AboutScreen>
 
               //about you & your company - write some info
               const Text(
-                "This app has been developed by Muhammad Ali, "
-                "This is the world number 1 ride sharing app. Available for all. "
-                "20M+ people already use this app.",
+                "We at powerstrip, are on a mission to make India an EV-focused nation by developing a deeply integrated network of charge points,"
+                "that allow users to charge their EVs wherever they wish to park,"
+                "completely eliminating the term range anxiety.",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16,
@@ -67,9 +57,7 @@ class _AboutScreenState extends State<AboutScreen>
               ),
 
               const Text(
-                "This app has been developed by Muhammad Ali, "
-                    "This is the world number 1 ride sharing app. Available for all. "
-                    "20M+ people already use this app.",
+                "Our aim is to make each and every public parking to be EV charging ready.",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16,
@@ -83,9 +71,8 @@ class _AboutScreenState extends State<AboutScreen>
 
               //close
               ElevatedButton(
-                onPressed: ()
-                {
-                  SystemNavigator.pop();
+                onPressed: () {
+                  Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.white54,
@@ -95,12 +82,9 @@ class _AboutScreenState extends State<AboutScreen>
                   style: TextStyle(color: Colors.white),
                 ),
               ),
-
             ],
           ),
-
         ],
-
       ),
     );
   }
