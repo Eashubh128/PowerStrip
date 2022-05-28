@@ -1252,7 +1252,7 @@ class _MainScreenState extends State<MainScreen> {
   createActiveNearByDriverIconMarker() async {
     if (activeNearbyIcon == null) {
       final Uint8List markerIcon =
-          await AssistantMethods.getBytesFromAsset('images/Scooty.png', 100);
+          await AssistantMethods.getBytesFromAsset('images/Scooty.png', 80);
       activeNearbyIcon = BitmapDescriptor.fromBytes(markerIcon);
     }
   }
